@@ -1,0 +1,16 @@
+FROM alpine:latest
+
+# نصب ابزارهای پایه
+RUN apk add --no-cache curl ca-certificates tzdata
+
+# دانلود مستقیم باینری بدون استفاده از اسکریپت‌های سیستمی
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then ARCH="amd64"; elif [ "$ARCH" = "aarch64" ]; then ARCH="arm64"; fi && \
+    curl -Ls "https://github.com/mhsanaei/3x-ui/releases/latest/download/x-ui-linux-${ARCH}.tar.gz" -o /x-ui.tar.gz && \
+    tar -zxvf /x-ui.tar.gz -C /usr/local/ && \
+    rm /x-ui.tar.gz
+
+WORKDIR /usr/local/x-ui
+EXPOSE 2053
+
+CMD ["./x-ui"]
